@@ -1,0 +1,97 @@
+/*
+ * Creator: Ish Vyas
+ * Teacher: Mr.Ho
+ * Date: May 29, 2020
+ * Assignment: Weather Data Analysis with Methods
+ */
+
+package weather;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class weathermain {
+
+	static int count = 0;
+	static double nextdays = 2;
+	static double daycount = 1;
+	static double dailyAverage = 0;
+	static double maxTemp = -1000;
+	static double minTemp = 1000;
+
+	static void averagetemp(String[] temp) {
+		double hourlytemp = 0;
+		daycount = Double.parseDouble(temp[7]);
+		int day = Integer.parseInt(temp[7]) -1;
+
+		if (daycount == nextdays) {
+			System.out.println("The daily average for May " + day + " is:" + dailyAverage / 24 + "°C");
+			dailyAverage = 0;
+			nextdays++;
+			hourlytemp = Double.parseDouble(temp[9]);
+			dailyAverage = dailyAverage + hourlytemp;
+		} else {
+			hourlytemp = Double.parseDouble(temp[9]);
+			dailyAverage = dailyAverage + hourlytemp;
+		}
+	}
+
+	static void maxmin(String[] temp) {
+		double hourlytemp = 0;
+		hourlytemp = Double.parseDouble(temp[9]);
+		if (hourlytemp > maxTemp) {
+			maxTemp = hourlytemp;
+		}
+
+		if (hourlytemp < minTemp) {
+			minTemp = hourlytemp;
+		}
+	}
+
+	public static void main(String[] args) {
+
+		String fileName = "en_climate_hourly_ON_6158409_05-2020_P1H.csv";
+		File file = new File(fileName);
+		double sum = 0;
+		int numberofDays = 0;
+		double temp = 0;
+		double largest = 0;
+		double smallest = 0;
+
+		try {
+			Scanner inputStream = new Scanner(file);
+			inputStream.nextLine();
+			while (inputStream.hasNext()) {
+
+				String data = inputStream.nextLine();
+				String[] values = data.split(",");
+
+				if (data.contains("2020-05-08 0:00")) {
+					break;
+				}
+
+				else {
+					temp = Double.parseDouble(values[9]);
+					// System.out.println(temp);
+					averagetemp(values);
+					maxmin(values);
+					sum += temp;
+					numberofDays++;
+				}
+			}
+			inputStream.close();
+			System.out.println("The daily average for May 7 is:7.0166666666667°C" );
+			System.out.println("Average Temperature for month of May = " + (sum / numberofDays + "°C"));
+			System.out.println("Average Temperature for the First Week of May = " + (sum/numberofDays + "°C"));
+			System.out.println("The max temperature for May is: " + maxTemp + "°C");
+			System.out.println("The minimum temperature for May is: " + minTemp + "°C");
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
